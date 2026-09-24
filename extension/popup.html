@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 13px/1.45 system-ui, sans-serif; width: 360px; margin: 0; padding: 12px; }
+  h1 { font-size: 14px; margin: 0 0 8px; }
+  .prov { color: #555; font-size: 11px; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin-bottom: 10px; }
+  .k { color: #555; } .v { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .item { border-top: 1px solid #e3e3e3; padding: 6px 0; }
+  .p { color: #b00020; font-weight: 600; font-variant-numeric: tabular-nums; }
+  code { font-size: 11px; word-break: break-all; color: #333; }
+  .empty { color: #777; font-style: italic; }
+  .note { margin-top: 10px; font-size: 11px; color: #777; }
+</style>
+</head>
+<body>
+  <h1>fedxss</h1>
+  <div class="prov" id="prov">loading model…</div>
+  <div class="grid">
+    <span class="k">Records scored</span><span class="v" id="scored">–</span>
+    <span class="k">Flagged</span><span class="v" id="flagged">–</span>
+    <span class="k">Mean score time</span><span class="v" id="ms">–</span>
+  </div>
+  <div id="recent"><div class="empty">No detections this session.</div></div>
+  <div class="note">Research prototype. Nothing is uploaded; all scoring is local.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

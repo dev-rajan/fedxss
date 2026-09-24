@@ -1,0 +1,265 @@
+{
+  "git_commit": "not-a-git-repo",
+  "config": {
+    "dim": 320,
+    "hidden": 64,
+    "epochs": 30,
+    "lr": 0.3,
+    "batch_size": 64,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ]
+  },
+  "n_train": 11645,
+  "n_test": 2911,
+  "rule_based": {
+    "accuracy": 0.7897629680522157,
+    "precision": 0.6862337662337662,
+    "recall": 0.9939804364183596,
+    "f1": 0.8119237861094037,
+    "fpr": 0.38179519595448796,
+    "tp": 1321.0,
+    "fp": 604.0,
+    "fn": 8.0,
+    "tn": 978.0
+  },
+  "centralised_runs": [
+    {
+      "accuracy": 0.9951906561319135,
+      "precision": 1.0,
+      "recall": 0.9894657637321295,
+      "f1": 0.9947049924357034,
+      "fpr": 0.0,
+      "tp": 1315.0,
+      "fp": 0.0,
+      "fn": 14.0,
+      "tn": 1582.0,
+      "auroc": 0.9995267489124737,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.999864935874939,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.26729683300072793,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9995881050836204,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999467134475708,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.27273895800135506,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9995219926201369,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999353885650635,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.2672697089983558,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9996527906594028,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9998852014541626,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.2651589999986754,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9962212298179319,
+      "precision": 1.0,
+      "recall": 0.9917231000752446,
+      "f1": 0.9958443520967133,
+      "fpr": 0.0,
+      "tp": 1318.0,
+      "fp": 0.0,
+      "fn": 11.0,
+      "tn": 1582.0,
+      "auroc": 0.999518663215501,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999231100082397,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.2678700830001617,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9958777052559258,
+      "precision": 1.0,
+      "recall": 0.9909706546275395,
+      "f1": 0.9954648526077097,
+      "fpr": 0.0,
+      "tp": 1317.0,
+      "fp": 0.0,
+      "fn": 12.0,
+      "tn": 1582.0,
+      "auroc": 0.9995162850693324,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999287128448486,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.2695740419985668,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9996099840283703,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9998626708984375,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.2692020410013356,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9951906561319135,
+      "precision": 1.0,
+      "recall": 0.9894657637321295,
+      "f1": 0.9947049924357034,
+      "fpr": 0.0,
+      "tp": 1315.0,
+      "fp": 0.0,
+      "fn": 14.0,
+      "tn": 1582.0,
+      "auroc": 0.9996085571406692,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9998587369918823,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.26823391699872445,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9995562379249628,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999321699142456,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.26955120799902943,
+      "n_params": 20609
+    },
+    {
+      "accuracy": 0.9955341806939196,
+      "precision": 1.0,
+      "recall": 0.9902182091798345,
+      "f1": 0.995085066162571,
+      "fpr": 0.0,
+      "tp": 1316.0,
+      "fp": 0.0,
+      "fn": 13.0,
+      "tn": 1582.0,
+      "auroc": 0.9995724093189085,
+      "fpr_at_recall": 0.0,
+      "threshold_at_recall": 0.9999043941497803,
+      "achieved_recall": 0.9503386004514672,
+      "target_recall": 0.95,
+      "train_seconds": 0.26749566699982097,
+      "n_params": 20609
+    }
+  ],
+  "centralised_summary": {
+    "accuracy": {
+      "mean": 0.9955685331501203,
+      "std": 0.0002853529324258747
+    },
+    "precision": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "recall": {
+      "mean": 0.9902934537246051,
+      "std": 0.0006250281311450678
+    },
+    "f1": {
+      "mean": 0.9951229586551253,
+      "std": 0.00031548479194525925
+    },
+    "fpr": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "auroc": {
+      "mean": 0.9995671773973378,
+      "std": 4.48097265562434e-05
+    },
+    "fpr_at_recall": {
+      "mean": 0.0,
+      "std": 0.0
+    }
+  },
+  "per_category_seed0": {
+    "reflected": {
+      "n": 440,
+      "accuracy": 0.9886363636363636
+    },
+    "stored": {
+      "n": 455,
+      "accuracy": 0.9846153846153847
+    },
+    "dom": {
+      "n": 434,
+      "accuracy": 0.9953917050691244
+    },
+    "benign": {
+      "n": 1582,
+      "accuracy": 1.0
+    }
+  }
+}

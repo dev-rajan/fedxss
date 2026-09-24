@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>fedxss — Table 4.3 measurement harness</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 14px; }
+  th, td { border: 1px solid #ddd; padding: 7px 9px; text-align: left; }
+  th { background: #f5f5f5; }
+  td.n { font-variant-numeric: tabular-nums; text-align: right; }
+  button { font: inherit; padding: 7px 14px; }
+  .note { color: #666; font-size: 12px; margin-top: 14px; }
+  code { background: #f2f2f2; padding: 1px 4px; }
+</style>
+</head>
+<body>
+<h1>fedxss measurement harness</h1>
+<p>Produces the operational figures for Table 4.3. Run in the browser you
+intend to report, with other tabs closed. Memory figures require Chrome
+started with <code>--enable-precise-memory-info</code>; without it Chrome
+rounds <code>performance.memory</code> heavily and the number is not worth
+reporting.</p>
+
+<button id="run">Run benchmark</button>
+<p class="note" id="hint">If the model fails to load, this page is probably
+open via <code>file://</code>, which cannot fetch. Serve the directory
+instead: <code>python3 -m http.server 8765</code> then open
+<code>http://localhost:8765/bench.html</code>. Alternatively pick the file
+manually below.</p>
+<p><input type="file" id="picker" accept=".json"> <span id="picked"></span></p>
+<div id="out"></div>
+
+<script src="features.js"></script>
+<script src="model.js"></script>
+<script>
+const BLOCK = 2000;        // records timed per timer pair
+const BLOCKS = 40;         // blocks, giving a distribution for the CI
+const WARMUP = 5000;
+
+/**
+ * Browsers clamp performance.now() resolution (Spectre mitigation), so
+ * timing a single ~10us operation returns 0 or one clock tick and nothing
+ * in between. Timing a BLOCK of records with one timer pair and dividing
+ * gives an accurate per-record figure regardless of clock granularity, and
+ * the spread across blocks supports a meaningful confidence interval.
+ */
+function clockResolutionMs() {
+  let minDelta = Infinity;
+  for (let i = 0; i < 100000; i++) {
+    const a = performance.now(), b = performance.now();
+    const d = b - a;
+    if (d > 0 && d < minDelta) minDelta = d;
+  }
+  return minDelta === Infinity ? NaN : minDelta;
+}
+
+// Fallback set, used only if bench_samples.json is unavailable. These are
+// short and synthetic, so they measure the BEST case; the real sample
+// drawn from the test set is roughly five times slower per record and is
+// what Table 4.3 should report.
+const FALLBACK_SAMPLES = [
+  { url: "https://example.com/search?q=hello+world", script: "", sink: "none", origin: "same" },
+  { url: "https://example.com/app", script: 'document.getElementById("t").textContent = data.name;', sink: "textContent", origin: "same" },
+  { url: "https://example.com/post/8812", script: '<div class="card"><a href="/u/12">Profile</a></div>', sink: "innerHTML", origin: "same" },
+  { url: "https://example.com/s?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E", script: '<img src=x onerror=alert(1)>', sink: "innerHTML", origin: "same" },
+  { url: "https://example.com/app#%3Csvg%2Fonload%3Dalert(1)%3E", script: 'out.innerHTML = location.hash.slice(1);', sink: "innerHTML", origin: "same" },
+];
+
+let SAMPLES = FALLBACK_SAMPLES;
+let sampleSource = "synthetic fallback (best case)";
+
+async function loadSamples() {
+  try {
+    const r = await fetch("bench_samples.json");
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const recs = await r.json();
+    if (Array.isArray(recs) && recs.length > 100) {
+      SAMPLES = recs;
+      sampleSource = `${recs.length} real records from the held-out test set`;
+    }
+  } catch (e) {
+    // keep the fallback; the table reports which was used
+  }
+}
+
+function pct(arr, p) {
+  const a = [...arr].sort((x, y) => x - y);
+  return a[Math.min(a.length - 1, Math.floor(a.length * p))];
+}
+
+function bootstrapCI(arr, n = 2000) {
+  const means = [];
+  for (let b = 0; b < n; b++) {
+    let s = 0;
+    for (let i = 0; i < arr.length; i++) s += arr[(Math.random() * arr.length) | 0];
+    means.push(s / arr.length);
+  }
+  means.sort((a, b) => a - b);
+  return [means[(n * 0.025) | 0], means[(n * 0.975) | 0]];
+}
+
+let manualPayload = null;
+document.getElementById("picker").addEventListener("change", async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    manualPayload = JSON.parse(await f.text());
+    document.getElementById("picked").textContent =
+      `loaded ${f.name} (${(f.size / 1024).toFixed(0)} KiB)`;
+  } catch (err) {
+    document.getElementById("picked").textContent = `could not parse: ${err}`;
+  }
+});
+
+async function loadPayload() {
+  if (manualPayload) return manualPayload;
+  try {
+    const r = await fetch("model.json");
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return await r.json();
+  } catch (err) {
+    throw new Error(
+      "could not load model.json (" + err.message + "). Serve this directory " +
+      "over HTTP, or choose model.json with the file picker above.");
+  }
+}
+
+document.getElementById("run").onclick = async () => {
+  const out = document.getElementById("out");
+  out.innerHTML = "<p>running…</p>";
+  await new Promise(r => setTimeout(r, 50));
+
+  let payload;
+  try {
+    payload = await loadPayload();
+  } catch (err) {
+    out.innerHTML = `<p style="color:#b00020">${err.message}</p>`;
+    return;
+  }
+  await loadSamples();
+
+  const memBefore = performance.memory ? performance.memory.usedJSHeapSize : null;
+  const tLoad0 = performance.now();
+  const det = new Detector(payload);
+  const loadMs = performance.now() - tLoad0;
+  const memAfter = performance.memory ? performance.memory.usedJSHeapSize : null;
+
+  for (let i = 0; i < WARMUP; i++) det.predict(featurise(SAMPLES[i % SAMPLES.length]));
+
+  const res = clockResolutionMs();
+
+  // Block timing: one timer pair per BLOCK records.
+  const featPer = [], scorePer = [], totalPer = [];
+  for (let b = 0; b < BLOCKS; b++) {
+    const vecs = new Array(BLOCK);
+
+    let t0 = performance.now();
+    for (let i = 0; i < BLOCK; i++) vecs[i] = featurise(SAMPLES[i % SAMPLES.length]);
+    let t1 = performance.now();
+    featPer.push((t1 - t0) / BLOCK);
+
+    t0 = performance.now();
+    for (let i = 0; i < BLOCK; i++) det.predict(vecs[i]);
+    t1 = performance.now();
+    scorePer.push((t1 - t0) / BLOCK);
+
+    t0 = performance.now();
+    for (let i = 0; i < BLOCK; i++) det.predict(featurise(SAMPLES[i % SAMPLES.length]));
+    t1 = performance.now();
+    totalPer.push((t1 - t0) / BLOCK);
+  }
+
+  const memPeak = performance.memory ? performance.memory.usedJSHeapSize : null;
+  const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+  const ci = bootstrapCI(totalPer);
+  const REPS = BLOCK * BLOCKS;
+
+  const memNote = (memBefore != null && memAfter === memBefore)
+    ? " (bucketed — restart with --enable-precise-memory-info)" : "";
+
+  const modelKiB = JSON.stringify(payload).length / 1024;
+  const rows = [
+    ["Model payload size (KiB)", modelKiB.toFixed(1)],
+    ["Model load + parse (ms)", loadMs.toFixed(3)],
+    ["Timer resolution detected (ms)", isNaN(res) ? "unknown" : res.toFixed(4)],
+    ["Feature extraction (ms/record, mean)", mean(featPer).toFixed(5)],
+    ["Inference only (ms/record, mean)", mean(scorePer).toFixed(5)],
+    ["End-to-end (ms/record, mean)", mean(totalPer).toFixed(5)],
+    ["End-to-end 95% CI (ms/record)", `[${ci[0].toFixed(5)}, ${ci[1].toFixed(5)}]`],
+    ["Per-block p50 / p95 / p99 (ms/record)",
+      `${pct(totalPer,0.5).toFixed(5)} / ${pct(totalPer,0.95).toFixed(5)} / ${pct(totalPer,0.99).toFixed(5)}`],
+    ["Throughput (records/s)", (1000 / mean(totalPer)).toFixed(0)],
+    ["Typical page cost, 50 records (ms)", (mean(totalPer) * 50).toFixed(3)],
+    ["Heap before model (MB)", memBefore == null ? "unavailable" : (memBefore/1048576).toFixed(2)],
+    ["Heap after model (MB)", memAfter == null ? "unavailable" : (memAfter/1048576).toFixed(2) + memNote],
+    ["Model heap cost (MB)", memAfter == null ? "unavailable" : ((memAfter-memBefore)/1048576).toFixed(3) + memNote],
+    ["Model heap cost, theoretical (KiB)", (20609 * 4 / 1024).toFixed(1)],
+    ["Peak heap during run (MB)", memPeak == null ? "unavailable" : (memPeak/1048576).toFixed(2)],
+    ["Per-round upload (KiB)", (20609 * 4 / 1024).toFixed(1)],
+    ["Records timed", `${REPS} (${BLOCKS} blocks x ${BLOCK})`],
+    ["Benchmark input", sampleSource],
+    ["User agent", navigator.userAgent],
+  ];
+
+  out.innerHTML = "<table><tr><th>Metric</th><th>Value</th></tr>" +
+    rows.map(([k, v]) => `<tr><td>${k}</td><td class="n">${v}</td></tr>`).join("") +
+    "</table><p class='note'>Copy these into Table 4.3, and record your " +
+    "machine specification alongside them. Memory rows read 'unavailable' " +
+    "unless Chrome was started with --enable-precise-memory-info.</p>";
+};
+</script>
+</body>
+</html>

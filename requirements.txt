@@ -1,0 +1,14 @@
+numpy>=1.26
+pandas>=2.0
+scikit-learn>=1.4
+scipy>=1.11
+certifi>=2024.2.2
+matplotlib>=3.8
+flwr[simulation]>=1.38
+dp-accounting>=0.4.3
+
+# Deliberately NOT required:
+#   torch   - the detector is pure NumPy so it ports to browser JavaScript,
+#             and torch has no Python 3.14 wheels yet
+#   opacus  - needs torch; dp.py implements per-example clipping directly
+#             and accounts with Google's dp-accounting, which Flower wraps
