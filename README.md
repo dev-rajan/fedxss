@@ -56,8 +56,11 @@ browser JavaScript. PyTorch and Opacus are deliberately not dependencies:
 `dp-accounting` for the privacy accounting. The rationale is set out in
 [requirements.txt](requirements.txt) and [src/model.py](src/model.py).
 
-**Optional external dataset:** `external.py` needs `XSS_dataset.csv` in the
-directory above the repository root. Phases 1–4 do not need it.
+**Optional external dataset:** `external.py` needs `XSS_dataset.csv`, a
+public XSS dataset from Kaggle (see
+[Data sources and attribution](#data-sources-and-attribution)). Download it
+and place it in the directory above the repository root. Phases 1–4 do not
+need it.
 
 ## Installation
 
@@ -208,8 +211,9 @@ becomes substantial.
 
 ### External validation
 
-The external corpus is `XSS_dataset.csv`: 8,556 records (1,183 benign and
-7,373 malicious). Other researchers assembled it for a different study. It
+The external corpus is `XSS_dataset.csv`, a public dataset from Kaggle:
+8,556 records (1,183 benign and 7,373 malicious). Other researchers
+assembled it for a different study. It
 has no URL, sink or origin metadata, so the detector works from script
 content alone.
 
@@ -286,8 +290,9 @@ Chapter 3:
 
 - The malicious payloads come from the public collections listed under
   Deviation 1 above. Each one keeps its original licence.
-- `XSS_dataset.csv` is a published dataset assembled by third parties. It is
-  used only for external validation and is not redistributed in this
-  repository.
+- `XSS_dataset.csv` is a public dataset published on Kaggle by third
+  parties: <Kaggle dataset URL>. It is used only for external validation and
+  is not redistributed in this repository. Its use is subject to the licence
+  on its Kaggle page.
 - The dissertation attributes any third-party code adapted from reference
   implementations.
