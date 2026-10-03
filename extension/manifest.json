@@ -5,7 +5,7 @@
   "description": "Browser-side XSS detection using a model trained by federated learning. Research prototype; not for production use.",
   "permissions": ["storage"],
   "host_permissions": ["<all_urls>"],
-  "background": { "service_worker": "background.js", "type": "module" },
+  "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

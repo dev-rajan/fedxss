@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Riverside Books — search</title>
+    <style>
+      body {
+        font:
+          15px/1.6 system-ui,
+          sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #222;
+      }
+      .banner {
+        background: #fff4f4;
+        border: 1px solid #e0b4b4;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font-size: 13px;
+        color: #8a2b2b;
+        margin-bottom: 22px;
+      }
+      #results {
+        border: 1px solid #eee;
+        border-radius: 6px;
+        padding: 14px;
+        min-height: 60px;
+      }
+      code {
+        background: #f2f2f2;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 12.5px;
+      }
+      a {
+        color: #1f3b73;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="banner">
+      <strong>Intentionally vulnerable.</strong> This page writes the
+      <code>q</code> query parameter directly into
+      <code>innerHTML</code> without encoding. It exists only to demonstrate
+      detection and must not be served beyond localhost.
+    </div>
+
+    <h1>Search results</h1>
+    <p>Showing matches for: <span id="term"></span></p>
+    <div id="results"></div>
+    <p><a href="index.html">&larr; back to demonstration index</a></p>
+
+    <script>
+      // Reflected XSS: an attacker-controlled source flows into a dangerous sink
+      // with no encoding. This is the source-to-sink pattern the detector's
+      // feature vector targets, and it is what the demonstration flags.
+      var q = new URLSearchParams(location.search).get("q") || "";
+      document.getElementById("term").textContent = q;
+      document.getElementById("results").innerHTML =
+        "No titles matched " + q + ".";
+    </script>
+  </body>
+</html>

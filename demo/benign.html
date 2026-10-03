@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Riverside Books — catalogue</title>
+    <style>
+      body {
+        font:
+          15px/1.6 system-ui,
+          sans-serif;
+        max-width: 700px;
+        margin: 40px auto;
+        padding: 0 20px;
+        color: #222;
+      }
+      .item {
+        border-bottom: 1px solid #eee;
+        padding: 12px 0;
+      }
+      .price {
+        color: #1f3b73;
+        font-weight: 600;
+      }
+      a {
+        color: #1f3b73;
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+  NOTE: this page deliberately contains NO inline script.
+
+  Testing the exported model against hand-written page scripts (createElement
+  plus textContent, a DOMContentLoaded wrapper, an escapeHtml helper) returned
+  53-91% and flagged all of them. Those patterns are absent from the benign
+  training sources, which are library source, page templates and encyclopaedia
+  markup. Markup-only records score 2-45% and are not flagged.
+
+  This is a real limitation of the detector, recorded in the thesis. Do not
+  "fix" the demonstration by tuning the page; the page reflects what the model
+  can currently be shown to do.
+-->
+    <h1>Riverside Books</h1>
+    <p>Second-hand and antiquarian. Established 1974.</p>
+
+    <div class="item">
+      <a href="/book/112">The Leopard</a> &mdash; Lampedusa &middot;
+      <span class="price">£8.50</span>
+    </div>
+    <div class="item">
+      <a href="/book/087">A Month in the Country</a> &mdash; Carr &middot;
+      <span class="price">£6.00</span>
+    </div>
+    <div class="item">
+      <a href="/book/245">The Rings of Saturn</a> &mdash; Sebald &middot;
+      <span class="price">£11.25</span>
+    </div>
+    <div class="item">
+      <a href="/book/301">Austerlitz</a> &mdash; Sebald &middot;
+      <span class="price">£9.75</span>
+    </div>
+
+    <p>Open Tuesday to Saturday, 10am to 5pm.</p>
+    <p><a href="index.html">&larr; back to demonstration index</a></p>
+  </body>
+</html>

@@ -10,10 +10,15 @@
  * Detections are held in memory only and are lost when the worker unloads.
  * Persisting a log of flagged page content would recreate exactly the
  * centralised record of browsing behaviour the study sets out to avoid.
+ *
+ * features.js and model.js are loaded with importScripts rather than ES
+ * module imports: both files are also require()d by the Node parity check
+ * in tools/, so they export via module.exports and carry no `export`
+ * statements. A module service worker cannot read those, which is why the
+ * manifest declares a classic worker.
  */
 
-import { featurise } from "./features.js";
-import { Detector } from "./model.js";
+importScripts("features.js", "model.js");
 
 let detector = null;
 let loading = null;
@@ -34,7 +39,13 @@ async function ensureLoaded() {
       detector = new Detector(payload);
       console.log("[fedxss] model loaded:", payload.provenance);
       return detector;
-    })();
+    })().catch((e) => {
+      // Reset so a later call retries instead of awaiting a rejected promise
+      // forever, which would leave the popup stuck on "loading model...".
+      loading = null;
+      console.error("[fedxss] model load failed:", e);
+      throw e;
+    });
   }
   return loading;
 }
@@ -80,14 +91,16 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     return true;   // async response
   }
   if (msg?.type === "stats") {
-    ensureLoaded().then((d) => sendResponse({
-      ok: true,
-      stats: {
-        ...stats,
-        meanScoreMs: stats.scored ? stats.totalScoreMs / stats.scored : 0,
-      },
-      provenance: d.provenance,
-    }));
+    ensureLoaded()
+      .then((d) => sendResponse({
+        ok: true,
+        stats: {
+          ...stats,
+          meanScoreMs: stats.scored ? stats.totalScoreMs / stats.scored : 0,
+        },
+        provenance: d.provenance,
+      }))
+      .catch((e) => sendResponse({ ok: false, error: String(e) }));
     return true;
   }
 });

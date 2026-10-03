@@ -1,7 +1,16 @@
 chrome.runtime.sendMessage({ type: "stats" }, (resp) => {
-  if (!resp?.ok) return;
+  const prov = document.getElementById("prov");
+  // Surface failures instead of leaving the popup on "loading model…".
+  if (chrome.runtime.lastError) {
+    prov.textContent = "extension error: " + chrome.runtime.lastError.message;
+    return;
+  }
+  if (!resp?.ok) {
+    prov.textContent = "model failed to load" + (resp?.error ? ": " + resp.error : "");
+    return;
+  }
   const s = resp.stats, p = resp.provenance || {};
-  document.getElementById("prov").textContent =
+  prov.textContent =
     `${p.training || "model"} · test F1 ${Number(p.test_f1 || 0).toFixed(4)}`;
   document.getElementById("scored").textContent = s.scored;
   document.getElementById("flagged").textContent = s.flagged;
