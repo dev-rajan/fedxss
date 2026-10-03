@@ -86,11 +86,13 @@
       <p>
         A deliberately vulnerable search page that writes the
         <code>q</code> parameter straight into <code>innerHTML</code>. The
-        detector should flag it.
+        detector should flag it. The payload writes to the console rather than
+        raising a dialog, so the demonstration is not interrupted &mdash; the
+        injection itself is identical.
       </p>
       <a
         class="go"
-        href="vulnerable.html?q=%3Cimg%20src%3Dx%20onerror%3Dalert(1)%3E"
+        href="vulnerable.html?q=%3Cimg%20src%3Dx%20onerror%3Dconsole.log(%27XSS%20executed%27)%3E"
         >Open with payload</a
       >
     </div>
